@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "Recipient Manager for Outlook Web",
+  "version": "1.2",
+  "description": "Extract recipients from Outlook on the web and build an Excel-like list that persists on screen.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://outlook.office.com/*",
+    "https://outlook.office365.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Recipient Manager"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://outlook.office.com/*", "https://outlook.office365.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["styles.css"],
+      "matches": ["https://outlook.office.com/*", "https://outlook.office365.com/*"]
+    }
+  ],
+  "icons": {
+    "16": "/icons/icon16.png",
+    "48": "/icons/icon48.png",
+    "128": "/icons/icon128.png"
+  }
+}

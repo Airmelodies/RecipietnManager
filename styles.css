@@ -1,0 +1,659 @@
+/* ===========================
+   Design System (CSS Variables)
+   =========================== */
+:root{
+  /* Brand colors */
+  --primary-500:#0f6cbd;       /* Outlook blue */
+  --primary-600:#0f7cbd;
+  --primary-700:#0f7bbd;
+
+  /* Text */
+  --text-strong:#1b1c1d;
+  --text-muted:#5c5f66;
+  --text-invert:#ffffff;
+
+  /* Surfaces & borders */
+  --bg-card:#ffffff;
+  --border:#dcdfe4;
+  --border-soft:#e8ebf0;
+
+  /* Shadows */
+  --shadow-sm:0 1px 2px rgba(0,0,0,.06);
+  --shadow-md:0 8px 24px rgba(0,0,0,.15);
+  --shadow-lg:0 14px 30px rgba(20,32,54,.16);
+
+  /* Radii */
+  --radius-btn:5px;     /* buttons */
+  --radius-input:4px;   /* inputs/textarea */
+  --radius-card:8px;   /* card/overlay */
+
+  /* Focus ring */
+  --ring:#9cc3ea;
+
+  /* Layout widths */
+  --stack-width: 220px;   /* width for Client List & Build List stacks */
+  --add-fixed-width: 50px;/* compact +Add button (left) */
+
+  /* Button sizing */
+  --btn-pad-y: 9px;       /* controls button height */
+  --btn-pad-x: 14px;
+  --btn-font: 12px;
+
+  /* Adjustable "Build List On/Off" button width
+     - 100% → fill stack width
+     - 260px / 280px / etc. → longer than stack
+     - auto → natural width
+  */
+  --send-width: 100%;
+}
+
+/* ===== Base page styling ===== */
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Overlay panel ===== */
+
+#rm-panel-container {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 2147483647; /* Always on top */
+}
+
+/* Base panel styles - NOT resizable by default */
+.rm-panel {
+  width: 460px;
+  max-height: calc(100vh - 20px);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  min-width: 300px;
+  min-height: 200px;
+}
+
+/* Expanded state - enable resize */
+.rm-panel:not(.minimized) {
+  resize: both;
+  overflow: auto;
+}
+
+/* Visual resize indicator for expanded state */
+.rm-panel:not(.minimized)::after {
+  content: "";
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(135deg, transparent 50%, #aaa 50%);
+  pointer-events: none;
+}
+
+/* Minimized state - disable all resize functionality */
+.rm-panel.minimized {
+  height: auto !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  resize: none !important;
+  overflow: hidden !important;
+}
+
+.rm-panel.minimized .rm-panel__body {
+  display: none;
+}
+
+/* Hide resize corner indicator when minimized */
+.rm-panel.minimized::after {
+  display: none !important;
+}
+
+/* Header with title + close button */
+.rm-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px; /* thinner bar */
+  background: linear-gradient(180deg,#f7f9fc 0%,#f1f4f9 100%);
+  border-bottom: 1px solid var(--border-soft);
+  cursor: move; /* draggable handle */
+  background: #0f6cbd;
+}
+
+.rm-panel__title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;           /* not bold */
+  letter-spacing: .2px;
+  color: var(--text-strong);
+  color: #ffffff;
+}
+
+.rm-panel__close {
+  border: 0px solid var(--border);
+  background: #0f6cbd;
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 3px 3px;
+  border-radius: var(--radius-btn);
+}
+
+.rm-panel__close:hover {
+  background: #6b9fcc;
+}
+
+/* Minimize Button */
+.rm-panel__minimize {
+  border: 0px solid var(--border);
+  background: #0f6cbd;
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: var(--radius-btn);
+  margin-right: 8px;
+}
+
+.rm-panel__minimize:hover {
+  background: #6b9fcc;
+}
+
+/* Header controls container */
+.rm-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Body */
+.rm-panel__body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  overflow: auto;
+  max-height: calc(100vh - 60px);
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* Form rows */
+.rm-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.rm-row label {
+  width: 40px;
+  font-size: 12px;
+  color: #3b4250;
+  letter-spacing: .2px;
+  text-align: right;
+}
+
+.rm-row input[type="text"],
+.rm-row textarea {
+  flex: 1;
+  padding: 7px 14px;
+  font-size: 12px;
+  border-radius: var(--radius-input);
+  border: 1px solid var(--border);
+  background: #fcfdff;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+.rm-row textarea {
+  resize: vertical;
+  min-height: 20px;
+}
+
+.rm-row input:focus,
+.rm-row textarea:focus {
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 3px rgba(156,195,234,.45);
+  background: #ffffff;
+}
+
+/* ===== Button System ===== */
+
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: var(--radius-btn);
+  font-size: var(--btn-font);
+  padding: var(--btn-pad-y) var(--btn-pad-x);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform .06s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease, color .15s ease;
+  will-change: transform;
+  min-width: 0;
+  font-family: inherit;
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Primary (Outlook blue) */
+.rm-btn-primary,
+#rm-btnExtract,
+#rm-btnClear,
+#rm-btnConfigureClientList,
+#rm-btnSendToList,
+#rm-btnCopyTsv,
+#rm-clientListDone {
+  background: linear-gradient(180deg,var(--primary-600),var(--primary-500));
+  color: var(--text-invert);
+  border-color: var(--primary-600);
+  box-shadow: var(--shadow-sm);
+}
+
+.rm-btn-primary:hover,
+#rm-btnExtract:hover,
+#rm-btnClear:hover,
+#rm-btnConfigureClientList:hover,
+#rm-btnSendToList:hover,
+#rm-btnCopyTsv:hover,
+#rm-clientListDone:hover {
+  background: linear-gradient(180deg,var(--primary-700),var(--primary-600));
+  border-color: var(--primary-700);
+  box-shadow: 0 4px 10px rgba(46,103,156,.28);
+}
+
+/* Secondary (white) */
+.rm-btn-secondary,
+#rm-btnPrev,
+#rm-btnNext,
+#rm-btnAdd,
+#rm-btnClearList,
+#rm-btnUndo,
+#rm-clientListClear,
+#rm-clientListCancel {
+  background: #ffffff;
+  color: #223040;
+  border: 1px solid var(--border);
+}
+
+.rm-btn-secondary:hover,
+#rm-btnPrev:hover:not(:disabled),
+#rm-btnNext:hover:not(:disabled),
+#rm-btnAdd:hover:not(:disabled),
+#rm-btnClearList:hover,
+#rm-btnUndo:hover:not(:disabled),
+#rm-clientListClear:hover,
+#rm-clientListCancel:hover {
+  background: #efefef;
+  border-color: #cfd6df;
+  box-shadow: var(--shadow-sm);
+}
+
+button:disabled {
+  opacity: .55;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* === Icon helper (used by buttons that have inline SVG) === */
+.btn-ic {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+}
+.btn-ic svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+  opacity: .95;
+}
+
+/* ===== Button layout row ===== */
+.rm-button-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 9px;
+  gap: 14px;
+}
+
+/* Left vertical group */
+.rm-left-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Middle vertical stack — Client List + Prev/Next (perfect fit) */
+.rm-client-config {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: var(--stack-width);
+}
+
+/* Client List full width in stack */
+.rm-client-config > button,
+.rm-client-config > #rm-btnConfigureClientList {
+  width: 100%;
+}
+
+.rm-client-nav-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  width: 100%;
+}
+
+/* Right vertical stack — Build List + Clear/Add */
+.rm-right-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: var(--stack-width);
+}
+
+/* Build List On/Off — adjustable width */
+.rm-right-buttons > button#rm-btnSendToList {
+  width: var(--send-width) !important; /* set in :root */
+  max-width: 100%;
+}
+
+/* Grid: + Add (left, short) + Clear List (right, long) */
+.rm-right-buttons-bottom {
+  display: grid;
+  grid-template-columns: var(--add-fixed-width) 1fr; /* +Add short, Clear List long */
+  gap: 6px;
+  width: 100%;
+}
+
+/* Keep heights consistent for the smaller pair */
+.rm-right-buttons-bottom button {
+  padding: var(--btn-pad-y) 12px;
+}
+
+/* Status text */
+#rm-status {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+#rm-status.info { color: var(--text-muted); }
+#rm-status.success { color: #107c10; }
+#rm-status.error { color: #d13438; }
+
+/* Section heading for list */
+.rm-list-heading {
+  margin: 8px 0 4px;
+  font-size: 12px;
+  font-weight: 400; /* lighter, modern */
+  color: #2a3440;
+}
+
+/* Export buttons row */
+.rm-export-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.rm-export-buttons label {
+  font-size: 12px;
+  color: #3b4250;
+}
+
+/* ===== Table wrapper: horizontal scroll on small widths ===== */
+
+.tbl__wrap {
+  overflow-x: auto;
+  width: 100%;
+  margin: 0.25rem 0;
+}
+
+/* ===== Excel-like table ===== */
+
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  color: #222;
+  table-layout: fixed;
+}
+
+.tbl caption {
+  caption-side: top;
+  text-align: left;
+  padding: 0.25rem 0;
+  font-weight: 600;
+  color: #111;
+}
+
+/* Row height + cell padding */
+.tbl tr {
+  height: 20px;
+}
+
+.tbl th,
+.tbl td {
+  padding: 2px 4px;
+  border: 1px solid var(--border);
+  width: 24ch;
+  max-width: 24ch;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+/* Header styling */
+.tbl thead th {
+  background: #f3f3f3;
+  font-weight: 600;
+  text-align: left;
+}
+
+/* Striped rows */
+.tbl--striped tbody tr:nth-child(even) {
+  background: #f0f4fb;
+}
+
+/* Row hover */
+.tbl tbody tr:hover {
+  background: #aad8ff6b;
+}
+
+/* Bordered variant */
+.tbl--bordered td,
+.tbl--bordered th {
+  border: 1px solid var(--border);
+}
+
+/* Numeric alignment helper */
+.tbl td.num,
+.tbl td.is-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* Sortable headers */
+.tbl thead th[tabindex] {
+  cursor: pointer;
+}
+.tbl thead th[tabindex]:focus {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+/* Sort indicators using aria-sort */
+.tbl thead th::after {
+  content: "";
+  margin-left: 0.35rem;
+  font-size: 0.75em;
+  opacity: 0.5;
+}
+.tbl thead th[aria-sort="ascending"]::after { content: "▲"; }
+.tbl thead th[aria-sort="descending"]::after { content: "▼"; }
+.tbl thead th[aria-sort="none"]:hover::after {
+  content: "↕";
+  opacity: 0.4;
+}
+
+/* Delete column (UI only, not exported) */
+.tbl th.rm-actions-header,
+.tbl td.rm-actions-cell {
+  width: 3ch;
+  max-width: 3ch;
+  text-align: center;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+/* Keep delete button appearance distinct */
+.rm-delete-btn {
+  padding: 4px;
+  font-size: 7px;
+  border-radius: 4px;
+  border: 2px solid #e0e0e0;
+  background: #f5f5f5;
+  cursor: pointer;
+  color: #5d5d5d;
+}
+.rm-delete-btn:hover {
+  background: #ffdddd;
+  border-color: #ff9295;
+  color: #d04145;
+}
+
+/* ===== Client List overlay (within the main panel) ===== */
+
+.rm-clientListOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(245,248,252,.88);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+/* The card that holds the textarea and buttons */
+.rm-clientListCard {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-lg);
+  padding: 14px;
+  width: 100%;
+  max-width: 380px;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+/* Title + helper text inside the card */
+.rm-clientListTitle {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 500;       /* not bold */
+  text-align: center;
+  letter-spacing: .3px;
+  color: var(--text-strong);
+}
+
+.rm-clientListHelp {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: #5c6a7a;
+  text-align: center;
+}
+
+/* Textarea for client names (one per line) */
+#rm-clientListTextarea {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  border-radius: var(--radius-input);
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  resize: vertical;
+  min-height: 150px;
+  background: #fcfdff;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+#rm-clientListTextarea:focus {
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 3px rgba(156,195,234,.45);
+  background: #ffffff;
+}
+
+/* Buttons row at bottom of card */
+.rm-clientListButtons {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; }
+}
+
+/* ===========================
+   Button height controls (add-on)
+   Paste at the end of styles.css
+   =========================== */
+
+/* 1) Global controls */
+:root {
+  /* Primary control via padding: increase/decrease to change height */
+  --btn-pad-y: 8px;       /* e.g., 6px (shorter), 12px (taller) */
+
+  /* Optional: enforce a minimum visual height for all buttons */
+  --btn-height: 20px;     /* set to 0 to disable, or use 28/36/etc. */
+
+  /* Optional: separate compact height for the Add / Clear List pair only */
+  --btn-height-compact: 25px; /* set to 0 to inherit the global height */
+}
+
+/* 2) Apply a min-height globally (won't break your padding-based sizing) */
+button {
+  min-height: var(--btn-height);         /* ensures a floor for height */
+  line-height: 1.2;                      /* keeps text readable with icons */
+  /* You already have: padding: var(--btn-pad-y) var(--btn-pad-x); */
+}
+
+/* 3) Make only the Add / Clear List pair compact (under Build List) */
+.rm-right-buttons-bottom button {
+  min-height: calc(
+    /* if compact is set (>0), use it; else fall back to global */
+    max(var(--btn-height-compact), var(--btn-height))
+  );
+  /* If you want slightly tighter horizontal padding on this pair: */
+  /* padding-left: 12px; padding-right: 12px;  (you already have this) */
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; }
+}
